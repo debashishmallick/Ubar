@@ -130,6 +130,69 @@ Authenticate an existing user and retrieve a JWT token.
 
 ---
 
+## GET `/user/profile`
+
+Retrieve the profile of the authenticated user.
+
+### Request Format
+
+No request body is required. The user must provide a valid JWT token in the `Authorization` header or as a cookie.
+
+### Responses
+
+#### Success Response (200 OK)
+
+```json
+{
+  "_id": "647d85e810c1a8785a889f23",
+  "fullName": {
+    "firstName": "John",
+    "lastName": "Doe"
+  },
+  "email": "john@example.com",
+  "soketId": null,
+  "__v": 0
+}
+```
+
+#### Authentication Error (401 Unauthorized)
+
+```json
+{
+  "message": "Unauthorized access"
+}
+```
+
+---
+
+## GET `/user/logout`
+
+Log out the authenticated user by clearing the token and blacklisting it.
+
+### Request Format
+
+No request body is required. The user must provide a valid JWT token in the `Authorization` header or as a cookie.
+
+### Responses
+
+#### Success Response (200 OK)
+
+```json
+{
+  "message": "Logged out successfully"
+}
+```
+
+#### Authentication Error (401 Unauthorized)
+
+```json
+{
+  "message": "Unauthorized access"
+}
+```
+
+---
+
 ### Example Requests
 
 #### Register User
@@ -158,6 +221,20 @@ curl -X POST http://localhost:3000/user/login \
 }'
 ```
 
+#### Get User Profile
+
+```bash
+curl -X GET http://localhost:3000/user/profile \
+-H "Authorization: Bearer <JWT_TOKEN>"
+```
+
+#### Logout User
+
+```bash
+curl -X GET http://localhost:3000/user/logout \
+-H "Authorization: Bearer <JWT_TOKEN>"
+```
+
 ---
 
 ### Security Notes
@@ -165,3 +242,4 @@ curl -X POST http://localhost:3000/user/login \
 - Passwords are hashed using bcrypt before storage.
 - JWT tokens are generated upon successful authentication.
 - Email addresses must be unique in the system.
+- Blacklisted tokens are stored to prevent reuse after logout.

@@ -243,3 +243,201 @@ curl -X GET http://localhost:3000/user/logout \
 - JWT tokens are generated upon successful authentication.
 - Email addresses must be unique in the system.
 - Blacklisted tokens are stored to prevent reuse after logout.
+
+
+
+#      CAPTAIN ROUTERS :-
+
+# Captain API Documentation
+
+## POST `/captain/register`
+
+Register a new captain account in the system.
+
+### Request Format
+
+```json
+{
+  "fullName": {
+    "firstName": "John",
+    "lastName": "Doe"        // Optional
+  },
+  "email": "john@example.com",
+  "password": "password123",
+  "vehicle": {
+    "color": "Red",
+    "plateNumber": "12345",
+    "capacity": 4,
+    "vehicleType": "car"     // Must be one of "car", "bike", or "auto"
+  }
+}
+```
+
+### Validation Rules
+
+- **firstName**: Required, minimum 3 characters
+- **lastName**: Optional, but if provided must be minimum 3 characters
+- **email**: Required, must be a valid email format
+- **password**: Required, minimum 6 characters
+- **vehicle.color**: Required, minimum 3 characters
+- **vehicle.plateNumber**: Required, must be numeric
+- **vehicle.capacity**: Required, must be numeric
+- **vehicle.vehicleType**: Required, must be one of `car`, `bike`, or `auto`
+
+### Responses
+
+#### Success Response (201 Created)
+
+```json
+{
+  "captain": {
+    "_id": "647d85e810c1a8785a889f23",
+    "fullName": {
+      "firstName": "John",
+      "lastName": "Doe"
+    },
+    "email": "john@example.com",
+    "vehicle": {
+      "color": "Red",
+      "plateNumber": "12345",
+      "capacity": 4,
+      "vehicleType": "car"
+    },
+    "__v": 0
+  },
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDdkODVlODEwYzFhODc4NWE4ODlmMjMiLCJpYXQiOjE2ODU5NTQ0NzJ9.qwertyuiopasdfghjklzxcvbnm"
+}
+```
+
+#### Validation Error (400 Bad Request)
+
+```json
+{
+  "errors": [
+    {
+      "msg": "First name must be at least 3 characters",
+      "param": "fullName.firstName",
+      "location": "body"
+    }
+  ]
+}
+```
+
+#### Server Error (500 Internal Server Error)
+
+```json
+{
+  "message": "Error generating token"
+}
+```
+
+---
+
+## POST `/captain/login`
+
+Authenticate an existing captain and retrieve a JWT token.
+
+### Request Format
+
+```json
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+```
+
+### Validation Rules
+
+- **email**: Required, must be a valid email format
+- **password**: Required, minimum 6 characters
+
+### Responses
+
+#### Success Response (200 OK)
+
+```json
+{
+  "captain": {
+    "_id": "647d85e810c1a8785a889f23",
+    "fullName": {
+      "firstName": "John",
+      "lastName": "Doe"
+    },
+    "email": "john@example.com",
+    "vehicle": {
+      "color": "Red",
+      "plateNumber": "12345",
+      "capacity": 4,
+      "vehicleType": "car"
+    },
+    "__v": 0
+  },
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDdkODVlODEwYzFhODc4NWE4ODlmMjMiLCJpYXQiOjE2ODU5NTQ0NzJ9.qwertyuiopasdfghjklzxcvbnm"
+}
+```
+
+#### Validation Error (400 Bad Request)
+
+```json
+{
+  "errors": [
+    {
+      "msg": "Please enter a valid email address",
+      "param": "email",
+      "location": "body"
+    }
+  ]
+}
+```
+
+#### Authentication Error (401 Unauthorized)
+
+```json
+{
+  "message": "Invalid email or password"
+}
+```
+
+---
+
+### Example Requests
+
+#### Register Captain
+
+```bash
+curl -X POST http://localhost:3000/captain/register \
+-H "Content-Type: application/json" \
+-d '{
+  "fullName": {
+    "firstName": "John",
+    "lastName": "Doe"
+  },
+  "email": "john@example.com",
+  "password": "password123",
+  "vehicle": {
+    "color": "Red",
+    "plateNumber": "12345",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}'
+```
+
+#### Login Captain
+
+```bash
+curl -X POST http://localhost:3000/captain/login \
+-H "Content-Type: application/json" \
+-d '{
+  "email": "john@example.com",
+  "password": "password123"
+}'
+```
+
+---
+
+### Security Notes
+
+- Passwords are hashed using bcrypt before storage.
+- JWT tokens are generated upon successful authentication.
+- Email addresses must be unique in the system.

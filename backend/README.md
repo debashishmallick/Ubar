@@ -246,7 +246,7 @@ curl -X GET http://localhost:3000/user/logout \
 
 
 
-#      CAPTAIN ROUTERS :-
+#                  -:CAPTAIN ROUTERS :-
 
 # Captain API Documentation
 
@@ -400,6 +400,76 @@ Authenticate an existing captain and retrieve a JWT token.
 
 ---
 
+## GET `/captain/profile`
+
+Retrieve the profile of the authenticated captain.
+
+### Request Format
+
+No request body is required. The captain must provide a valid JWT token in the `Authorization` header or as a cookie.
+
+### Responses
+
+#### Success Response (200 OK)
+
+```json
+{
+  "captain": {
+    "_id": "647d85e810c1a8785a889f23",
+    "fullName": {
+      "firstName": "John",
+      "lastName": "Doe"
+    },
+    "email": "john@example.com",
+    "vehicle": {
+      "color": "Red",
+      "plateNumber": "12345",
+      "capacity": 4,
+      "vehicleType": "car"
+    },
+    "__v": 0
+  }
+}
+```
+
+#### Authentication Error (401 Unauthorized)
+
+```json
+{
+  "message": "Unauthorized access"
+}
+```
+
+---
+
+## GET `/captain/logout`
+
+Log out the authenticated captain by clearing the token and blacklisting it.
+
+### Request Format
+
+No request body is required. The captain must provide a valid JWT token in the `Authorization` header or as a cookie.
+
+### Responses
+
+#### Success Response (200 OK)
+
+```json
+{
+  "message": "Logged out successfully"
+}
+```
+
+#### Authentication Error (401 Unauthorized)
+
+```json
+{
+  "message": "Unauthorized access"
+}
+```
+
+---
+
 ### Example Requests
 
 #### Register Captain
@@ -434,6 +504,20 @@ curl -X POST http://localhost:3000/captain/login \
 }'
 ```
 
+#### Get Captain Profile
+
+```bash
+curl -X GET http://localhost:3000/captain/profile \
+-H "Authorization: Bearer <JWT_TOKEN>"
+```
+
+#### Logout Captain
+
+```bash
+curl -X GET http://localhost:3000/captain/logout \
+-H "Authorization: Bearer <JWT_TOKEN>"
+```
+
 ---
 
 ### Security Notes
@@ -441,3 +525,4 @@ curl -X POST http://localhost:3000/captain/login \
 - Passwords are hashed using bcrypt before storage.
 - JWT tokens are generated upon successful authentication.
 - Email addresses must be unique in the system.
+- Blacklisted tokens are stored to prevent reuse after logout.
